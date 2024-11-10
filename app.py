@@ -7,7 +7,7 @@ import io
 
 # ページ設定
 st.set_page_config(
-    page_title="清掃記録分析",
+    page_title="LINEキーワード検索",
     page_icon="🧹",
     layout="centered"
 )
@@ -49,17 +49,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # アプリケーションヘッダー
-st.markdown('<p class="main-header">清掃記録分析 🧹</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">LINEトーク履歴から清掃記録を簡単に分析</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">LINEキーワード検索✉️</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">LINEトーク履歴から特定キーワードを簡単に分析</p>', unsafe_allow_html=True)
 
 # サイドバー - 設定
 with st.sidebar:
     st.header("⚙️ 設定")
-    default_keyword = "いまから清掃を開始します"
+    default_keyword = "例）いまから清掃を開始します"
     keyword = st.text_input(
         "検索キーワード",
         value=default_keyword,
-        help="清掃開始を示すメッセージのキーワードを入力してください"
+        help="検索したいキーワードを入力してください"
     )
 
 # メインコンテンツ
@@ -107,7 +107,7 @@ if uploaded_file:
                 st.markdown(
                     f"""
                     <div class="metric-card">
-                        <h3>総清掃回数</h3>
+                        <h3>総回数</h3>
                         <h2>{len(df)}回</h2>
                     </div>
                     """, 
@@ -119,7 +119,7 @@ if uploaded_file:
                 st.markdown(
                     f"""
                     <div class="metric-card">
-                        <h3>今月の清掃回数</h3>
+                        <h3>今月の回数</h3>
                         <h2>{len(last_month)}回</h2>
                     </div>
                     """, 
@@ -143,8 +143,8 @@ if uploaded_file:
             monthly = df.groupby(df['日付'].dt.strftime('%Y-%m')).size()
             fig = px.bar(
                 monthly,
-                title="月別清掃回数",
-                labels={'value': '清掃回数', 'index': '月'},
+                title="月別回数",
+                labels={'value': '回数', 'index': '月'},
                 template='simple_white'
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -154,8 +154,8 @@ if uploaded_file:
             weekday = df.groupby(df['日付'].dt.strftime('%A')).size()
             fig_weekday = px.bar(
                 weekday,
-                title="曜日別清掃回数",
-                labels={'value': '清掃回数', 'index': '曜日'},
+                title="曜日別回数",
+                labels={'value': '回数', 'index': '曜日'},
                 template='simple_white'
             )
             st.plotly_chart(fig_weekday, use_container_width=True)
@@ -164,8 +164,8 @@ if uploaded_file:
             excel_buffer = io.BytesIO()
             with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
                 df.to_excel(writer, sheet_name='全記録', index=False)
-                monthly.to_frame('清掃回数').to_excel(writer, sheet_name='月別集計')
-                weekday.to_frame('清掃回数').to_excel(writer, sheet_name='曜日別集計')
+                monthly.to_frame('回数').to_excel(writer, sheet_name='月別集計')
+                weekday.to_frame('回数').to_excel(writer, sheet_name='曜日別集計')
 
             excel_buffer.seek(0)
             
@@ -173,7 +173,7 @@ if uploaded_file:
             st.download_button(
                 label="📥 Excelファイルをダウンロード",
                 data=excel_buffer,
-                file_name="清掃記録分析.xlsx",
+                file_name="記録分析.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
